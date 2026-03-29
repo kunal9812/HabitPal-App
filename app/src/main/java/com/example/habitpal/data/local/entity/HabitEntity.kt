@@ -1,0 +1,19 @@
+package com.example.habitpal.data.local.entity
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "habits")
+data class HabitEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val title: String,
+    val description: String,
+    val frequency: String = "DAILY",
+    val reminderTime: String? = null,
+    val color: Int = 0,
+    val icon: String = "ic_habit_default",
+    val createdAt: Long = System.currentTimeMillis(),
+    val isActive: Boolean = true
+)
+

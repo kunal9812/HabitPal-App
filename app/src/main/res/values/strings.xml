@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">HabitPal</string>
+    <string name="home">Home</string>
+    <string name="progress">Progress</string>
+    <string name="community">Community</string>
+    <string name="profile">Profile</string>
+    <string name="add_habit">Add Habit</string>
+    <string name="loading_quote">Loading quote…</string>
+    <string name="loading_weather">Loading weather…</string>
+    <string name="quote_unavailable">Quote unavailable</string>
+    <string name="weather_unavailable">Weather unavailable</string>
+    <string name="quote_summary">“%1$s” — %2$s</string>
+    <string name="weather_summary">%1$s • %2$.1f°C • %3$s</string>
+    <string name="today_habits_count">Today\'s Habits (%1$d)</string>
+    <string name="mark_complete">Mark habit as complete</string>
+</resources>

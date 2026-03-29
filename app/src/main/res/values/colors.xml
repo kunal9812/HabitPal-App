@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
+    <!-- Primary brand color (blue from splash) -->
+    <color name="brand_blue">#4FC3F7</color>
+    <color name="brand_blue_dark">#0288D1</color>
+
+    <!-- Habit card colors (pastel, matching your design) -->
+    <color name="card_green">#C5E8A0</color>
+    <color name="card_pink">#F4A7C3</color>
+    <color name="card_blue">#A8D8F0</color>
+    <color name="card_yellow">#FAE29F</color>
+    <color name="card_purple">#C9B8F0</color>
+    <color name="card_orange">#FFB347</color>
+    <color name="card_teal">#80CBC4</color>
+    <color name="card_coral">#FF8A80</color>
+
+    <!-- Category colors (from Add Habit screen) -->
+    <color name="category_health">#5B8CDE</color>
+    <color name="category_mind">#F5C842</color>
+    <color name="category_social">#F06292</color>
+    <color name="category_learn">#9C7FE0</color>
+    <color name="category_wellness">#FF7043</color>
+    <color name="category_growth">#26C6A0</color>
+
+    <!-- Navy background (Add Habit screen) -->
+    <color name="navy_bg">#1B2340</color>
+    <color name="navy_surface">#252D47</color>
+
+    <!-- Neutral -->
+    <color name="surface_light">#F8F9FF</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="text_primary">#1A1A2E</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="divider">#E5E7EB</color>
+</resources>

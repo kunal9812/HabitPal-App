@@ -1,0 +1,48 @@
+<resources>
+    <style name="Base.Theme.HabitPal" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_blue</item>
+        <item name="colorPrimaryVariant">@color/brand_blue_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/category_growth</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSurface">@color/surface_light</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/divider</item>
+        <item name="android:colorBackground">@color/surface_light</item>
+        <item name="android:statusBarColor">@color/brand_blue</item>
+        <item name="android:navigationBarColor">@color/white</item>
+
+        <!-- Button style -->
+        <item name="materialButtonStyle">@style/Widget.HabitPal.Button</item>
+
+        <!-- Card style -->
+        <item name="materialCardViewStyle">@style/Widget.HabitPal.Card</item>
+    </style>
+
+    <style name="Theme.HabitPal" parent="Base.Theme.HabitPal"/>
+
+    <!-- Button style -->
+    <style name="Widget.HabitPal.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <!-- Card style -->
+    <style name="Widget.HabitPal.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- Splash theme -->
+    <style name="Theme.HabitPal.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#4FC3F7</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        <item name="windowSplashScreenIconBackgroundColor">#4FC3F7</item>
+        <item name="postSplashScreenTheme">@style/Theme.HabitPal</item>
+    </style>
+</resources>

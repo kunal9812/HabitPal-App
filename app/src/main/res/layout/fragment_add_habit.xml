@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Habit"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Habit Title Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Habit Title">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_habit_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Description Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Description (optional)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_habit_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="3"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Frequency Label -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Frequency"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Frequency Chips -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_frequency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:checkedChip="@id/chip_daily"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_daily"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Daily"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_weekly"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weekly"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_monthly"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Monthly"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Color Label -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Card Color"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Color Picker Row -->
+        <LinearLayout
+            android:id="@+id/color_picker_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start">
+
+            <View
+                android:id="@+id/color_blue"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#4A90D9"/>
+
+            <View
+                android:id="@+id/color_coral"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#E8664A"/>
+
+            <View
+                android:id="@+id/color_green"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#5BCE8F"/>
+
+            <View
+                android:id="@+id/color_amber"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#E8A838"/>
+
+            <View
+                android:id="@+id/color_purple"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#B368D9"/>
+
+            <View
+                android:id="@+id/color_pink"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#E8527A"/>
+
+        </LinearLayout>
+
+        <!-- Selected color indicator -->
+        <TextView
+            android:id="@+id/tv_selected_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Blue selected"
+            android:textSize="12sp"
+            android:layout_marginTop="8dp"
+            android:textColor="?attr/colorPrimary"/>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/btn_save_habit"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="16dp"
+            android:text="Save Habit"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+</ScrollView>
