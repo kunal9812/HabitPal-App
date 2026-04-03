@@ -69,13 +69,6 @@ class ProfileFragment : Fragment() {
             viewModel.setNotifications(checked)
         }
 
-        binding.switchDarkMode.setOnCheckedChangeListener { _, checked ->
-            viewModel.setDarkMode(checked)
-            AppCompatDelegate.setDefaultNightMode(
-                if (checked) AppCompatDelegate.MODE_NIGHT_YES
-                else AppCompatDelegate.MODE_NIGHT_NO
-            )
-        }
     }
 
     private fun observeState() {
@@ -83,20 +76,8 @@ class ProfileFragment : Fragment() {
             binding.tvUserName.text = name
             binding.tvAvatar.text = name.take(2).uppercase()
         }
-        viewLifecycleOwner.collectFlow(viewModel.totalHabits) { count ->
-            binding.tvStatHabits.text = count.toString()
-        }
-        viewLifecycleOwner.collectFlow(viewModel.totalCompletions) { count ->
-            binding.tvStatCompletions.text = count.toString()
-        }
-        viewLifecycleOwner.collectFlow(viewModel.longestStreak) { streak ->
-            binding.tvStatStreak.text = streak.toString()
-        }
         viewLifecycleOwner.collectFlow(viewModel.notificationsEnabled) { enabled ->
             binding.switchNotifications.isChecked = enabled
-        }
-        viewLifecycleOwner.collectFlow(viewModel.darkModeEnabled) { enabled ->
-            binding.switchDarkMode.isChecked = enabled
         }
     }
 
