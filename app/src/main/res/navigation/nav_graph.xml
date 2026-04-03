@@ -35,6 +35,23 @@ app:startDestination="@id/homeFragment">
         app:argType="long"
         android:defaultValue="-1L" />
 
+    <action
+        android:id="@+id/action_habitDetailFragment_to_editHabitFragment"
+        app:destination="@id/editHabitFragment" />
+
+</fragment>
+
+<fragment
+    android:id="@+id/editHabitFragment"
+    android:name="com.example.habitpal.presentation.edithabit.EditHabitFragment"
+    android:label="Edit Habit"
+    tools:layout="@layout/fragment_edit_habit">
+
+    <argument
+        android:name="habitId"
+        app:argType="long"
+        android:defaultValue="-1L" />
+
 </fragment>
 
 <fragment

@@ -71,6 +71,14 @@
             android:text="Mark as Complete"/>
 
         <Button
+            android:id="@+id/btn_edit"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="Edit Habit"/>
+
+        <Button
             android:id="@+id/btn_delete"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"

@@ -44,6 +44,11 @@ class HabitDetailFragment : Fragment() {
             viewModel.completeHabit(habitId)
             toast("Habit completed! 🎉")
         }
+        binding.btnEdit.setOnClickListener {
+            val action = HabitDetailFragmentDirections
+                .actionHabitDetailFragmentToEditHabitFragment(habitId = habitId.toLong())
+            findNavController().navigate(action)
+        }
         binding.btnDelete.setOnClickListener {
             viewModel.deleteHabit()
         }
