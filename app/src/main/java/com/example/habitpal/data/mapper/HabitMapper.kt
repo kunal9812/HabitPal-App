@@ -6,7 +6,7 @@ import com.example.habitpal.domain.model.Habit
 import com.example.habitpal.domain.model.HabitFrequency
 import com.example.habitpal.domain.model.HabitLog
 
-fun HabitEntity.toDomain(): Habit = Habit(
+fun HabitEntity.toDomain(completedTodayIds: Set<Int> = emptySet()): Habit = Habit(
     id = id,
     title = title,
     description = description,
@@ -15,7 +15,8 @@ fun HabitEntity.toDomain(): Habit = Habit(
     color = color,
     icon = icon,
     createdAt = createdAt,
-    isActive = isActive
+    isActive = isActive,
+    isCompletedToday = id in completedTodayIds
 )
 
 fun Habit.toEntity(): HabitEntity = HabitEntity(

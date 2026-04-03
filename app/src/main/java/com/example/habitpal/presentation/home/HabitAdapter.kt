@@ -63,8 +63,10 @@ class HabitAdapter(
                 binding.tvCategory.visibility = View.VISIBLE
                 binding.tvFrequency.text = habit.frequency.name
                     .lowercase().replaceFirstChar { it.uppercase() }
-                binding.tvCategory.text = habit.frequency.name
-                    .lowercase().replaceFirstChar { it.uppercase() }
+                binding.tvCategory.text = habit.icon
+                    .removePrefix("ic_habit_")
+                    .replace("_", " ")
+                    .replaceFirstChar { it.uppercase() }
 
                 binding.ivComplete.setImageResource(com.example.habitpal.R.drawable.ic_circle_outline)
                 binding.ivComplete.alpha = 1f

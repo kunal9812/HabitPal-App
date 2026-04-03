@@ -4,6 +4,7 @@ import com.example.habitpal.domain.repository.HabitRepository
 import com.example.habitpal.util.startOfDay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -19,14 +20,8 @@ class GetProgressStatsUseCase @Inject constructor(
     private val habitRepository: HabitRepository,
     private val getHabitStreakUseCase: GetHabitStreakUseCase
 ) {
-    // keep the original for HabitDetailViewModel
-    suspend operator fun invoke(): ProgressStats {
-        return observe().let {
-            var result = ProgressStats(0, 0, 0, 0, 0)
-            it.collect { stats -> result = stats }
-            result
-        }
-    }
+    // One-shot snapshot — returns the first emission from the reactive flow.
+    suspend operator fun invoke(): ProgressStats = observe().first()
 
     fun observe(): Flow<ProgressStats> {
         return combine(
