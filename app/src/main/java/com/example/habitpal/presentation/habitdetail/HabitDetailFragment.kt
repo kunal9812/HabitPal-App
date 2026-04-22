@@ -6,12 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.habitpal.R
 import com.example.habitpal.databinding.FragmentHabitDetailBinding
-import com.example.habitpal.util.collectFlow
-import com.example.habitpal.util.toast
+import com.example.habitpal.databinding.ItemCalendarDayBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.DayPosition
+import com.kizitonwose.calendar.core.daysOfWeek
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.format.TextStyle
+import java.util.Locale
 
 @AndroidEntryPoint
 class HabitDetailFragment : Fragment() {
@@ -42,37 +57,111 @@ class HabitDetailFragment : Fragment() {
     private fun setupClickListeners() {
         binding.btnComplete.setOnClickListener {
             viewModel.completeHabit(habitId)
-            toast("Habit completed! 🎉")
         }
         binding.btnEdit.setOnClickListener {
             val action = HabitDetailFragmentDirections
                 .actionHabitDetailFragmentToEditHabitFragment(habitId = habitId.toLong())
             findNavController().navigate(action)
         }
-        binding.btnDelete.setOnClickListener {
-            viewModel.deleteHabit()
+        binding.btnArchive.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.archive_habit)
+                .setMessage(R.string.archive_habit_message)
+                .setPositiveButton(R.string.archive) { _, _ -> viewModel.archiveHabit() }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
         }
     }
 
     private fun observeState() {
-        viewLifecycleOwner.collectFlow(viewModel.habit) { habit ->
-            habit?.let {
-                binding.tvHabitTitle.text = it.title
-                binding.tvHabitDescription.text = it.description
-                binding.tvHabitFrequency.text = it.frequency.name
-                    .lowercase()
-                    .replaceFirstChar { c -> c.uppercase() }
-                if (it.color != 0) {
-                    binding.viewColorBanner.setBackgroundColor(it.color)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                launch {
+                    viewModel.habit.collectLatest { habit ->
+                        habit ?: return@collectLatest
+                        binding.tvHabitTitle.text = habit.title
+                        binding.tvHabitDescription.text = habit.description
+                        binding.tvHabitFrequency.text = habit.frequency.name
+                            .lowercase()
+                            .replaceFirstChar { c -> c.uppercase() }
+                        if (habit.color != 0) {
+                            binding.viewColorBanner.setBackgroundColor(habit.color)
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.stats.collectLatest { stats ->
+                        stats ?: return@collectLatest
+                        binding.statCurrentStreak.tvStatValue.text = stats.currentStreak.toString()
+                        binding.statCurrentStreak.tvStatLabel.text = getString(R.string.current_streak)
+                        binding.statBestStreak.tvStatValue.text = stats.bestStreak.toString()
+                        binding.statBestStreak.tvStatLabel.text = getString(R.string.best_streak)
+                        binding.statTotal.tvStatValue.text = stats.totalCompletions.toString()
+                        binding.statTotal.tvStatLabel.text = getString(R.string.total_completions)
+                        binding.statRate.tvStatValue.text = "${(stats.allTimeRate * 100).toInt()}%"
+                        binding.statRate.tvStatLabel.text = getString(R.string.completion_rate)
+                    }
+                }
+
+                launch {
+                    viewModel.completionMap.collectLatest { map ->
+                        setupCalendar(map)
+                    }
+                }
+
+                launch {
+                    viewModel.isArchived.collectLatest { archived ->
+                        if (archived) findNavController().navigateUp()
+                    }
                 }
             }
         }
-        viewLifecycleOwner.collectFlow(viewModel.streak) { streak ->
-            binding.tvStreak.text = "🔥 $streak day streak"
+    }
+
+    private fun setupCalendar(completionMap: Map<LocalDate, Boolean>) {
+        val currentMonth = YearMonth.now()
+        val startMonth = currentMonth.minusMonths(6)
+        val daysOfWeek = daysOfWeek()
+
+        binding.calendarView.setup(startMonth, currentMonth, daysOfWeek.first())
+        binding.calendarView.scrollToMonth(currentMonth)
+
+        binding.calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            override fun create(view: View) = DayViewContainer(view)
+            override fun bind(container: DayViewContainer, data: CalendarDay) {
+                container.binding.tvDay.text = data.date.dayOfMonth.toString()
+                val completed = completionMap[data.date] == true
+                val isToday = data.date == LocalDate.now()
+                val bg = when {
+                    completed && isToday -> R.drawable.bg_day_done_today
+                    completed -> R.drawable.bg_day_done
+                    isToday -> R.drawable.bg_day_today
+                    data.position != DayPosition.MonthDate -> 0
+                    else -> R.drawable.bg_day_empty
+                }
+                if (bg != 0) container.binding.dayContainer.setBackgroundResource(bg)
+                else container.binding.dayContainer.background = null
+            }
         }
-        viewLifecycleOwner.collectFlow(viewModel.isDeleted) { deleted ->
-            if (deleted) findNavController().navigateUp()
-        }
+
+        binding.calendarView.monthHeaderBinder =
+            object : com.kizitonwose.calendar.view.MonthHeaderFooterBinder<MonthHeaderContainer> {
+                override fun create(view: View) = MonthHeaderContainer(view)
+                override fun bind(container: MonthHeaderContainer, data: com.kizitonwose.calendar.core.CalendarMonth) {
+                    container.binding.tvMonthHeader.text = data.yearMonth.month
+                        .getDisplayName(TextStyle.FULL, Locale.getDefault())
+                }
+            }
+    }
+
+    inner class DayViewContainer(view: View) : ViewContainer(view) {
+        val binding = ItemCalendarDayBinding.bind(view)
+    }
+
+    inner class MonthHeaderContainer(view: View) : ViewContainer(view) {
+        val binding = com.example.habitpal.databinding.ItemCalendarMonthHeaderBinding.bind(view)
     }
 
     override fun onDestroyView() {

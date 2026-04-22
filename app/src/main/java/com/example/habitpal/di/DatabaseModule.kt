@@ -3,6 +3,7 @@ package com.example.habitpal.di
 import android.content.Context
 import androidx.room.Room
 import com.example.habitpal.data.local.UserPreferencesDataSource
+import com.example.habitpal.data.local.dao.CategoryDao
 import com.example.habitpal.data.local.dao.HabitDao
 import com.example.habitpal.data.local.dao.HabitLogDao
 import com.example.habitpal.data.local.database.HabitDatabase
@@ -25,7 +26,9 @@ object DatabaseModule {
             context,
             HabitDatabase::class.java,
             Constants.DATABASE_NAME
-        ).build()
+        )
+            .addMigrations(HabitDatabase.MIGRATION_1_2)
+            .build()
 
     @Provides
     @Singleton
@@ -34,6 +37,10 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideHabitLogDao(database: HabitDatabase): HabitLogDao = database.habitLogDao()
+
+    @Provides
+    @Singleton
+    fun provideCategoryDao(database: HabitDatabase): CategoryDao = database.categoryDao()
 
     @Provides
     @Singleton

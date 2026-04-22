@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class EditHabitEvent {
-    object HabitSaved : EditHabitEvent()
+    data class HabitSaved(val habit: Habit) : EditHabitEvent()
     data class Error(val message: String) : EditHabitEvent()
 }
 
@@ -45,7 +45,8 @@ class EditHabitViewModel @Inject constructor(
         title: String,
         description: String,
         frequency: HabitFrequency,
-        color: Int
+        color: Int,
+        reminderTime: String? = null
     ) {
         val current = _habit.value ?: return
         if (title.isBlank()) {
@@ -56,15 +57,15 @@ class EditHabitViewModel @Inject constructor(
         }
         viewModelScope.launch {
             try {
-                updateHabitUseCase(
-                    current.copy(
+                val updated = current.copy(
                         title = title.trim(),
                         description = description.trim(),
                         frequency = frequency,
-                        color = color
+                        color = color,
+                        reminderTime = reminderTime
                     )
-                )
-                _events.emit(EditHabitEvent.HabitSaved)
+                updateHabitUseCase(updated)
+                _events.emit(EditHabitEvent.HabitSaved(updated))
             } catch (e: Exception) {
                 _events.emit(EditHabitEvent.Error(e.localizedMessage ?: "Failed to save habit"))
             }

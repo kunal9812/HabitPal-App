@@ -10,6 +10,12 @@ interface HabitDao {
     @Query("SELECT * FROM habits WHERE isActive = 1 ORDER BY createdAt DESC")
     fun getAllHabits(): Flow<List<HabitEntity>>
 
+    @Query("SELECT * FROM habits WHERE isActive = 1 AND isArchived = 0 ORDER BY sortOrder ASC, createdAt DESC")
+    fun getActiveHabits(): Flow<List<HabitEntity>>
+
+    @Query("SELECT * FROM habits WHERE isArchived = 1 ORDER BY title ASC")
+    fun getArchivedHabits(): Flow<List<HabitEntity>>
+
     @Query("SELECT * FROM habits WHERE id = :id")
     suspend fun getHabitById(id: Int): HabitEntity?
 
@@ -24,5 +30,22 @@ interface HabitDao {
 
     @Query("UPDATE habits SET isActive = 0 WHERE id = :id")
     suspend fun softDeleteHabit(id: Int)
+
+    @Query("SELECT * FROM habits WHERE isActive = 1 AND reminderTime IS NOT NULL")
+    suspend fun getHabitsWithReminders(): List<HabitEntity>
+
+    @Query("UPDATE habits SET isArchived = 1 WHERE id = :habitId")
+    suspend fun archiveHabit(habitId: Int)
+
+    @Query("UPDATE habits SET isArchived = 0 WHERE id = :habitId")
+    suspend fun restoreHabit(habitId: Int)
+
+    @Query("UPDATE habits SET sortOrder = :sortOrder WHERE id = :habitId")
+    suspend fun updateSortOrder(habitId: Int, sortOrder: Int)
+
+    @Transaction
+    suspend fun updateSortOrders(updates: List<Pair<Int, Int>>) {
+        updates.forEach { (id, order) -> updateSortOrder(id, order) }
+    }
 }
 

@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class AddHabitEvent {
-    object HabitAdded : AddHabitEvent()
+    data class HabitAdded(val habit: Habit) : AddHabitEvent()
     data class Error(val message: String) : AddHabitEvent()
 }
 
@@ -48,8 +48,7 @@ class AddHabitViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                addHabitUseCase(
-                    Habit(
+                val habit = Habit(
                         title = title.trim(),
                         description = description.trim(),
                         frequency = frequency,
@@ -57,8 +56,8 @@ class AddHabitViewModel @Inject constructor(
                         color = color,
                         icon = icon
                     )
-                )
-                _events.emit(AddHabitEvent.HabitAdded)
+                addHabitUseCase(habit)
+                _events.emit(AddHabitEvent.HabitAdded(habit))
             } catch (e: Exception) {
                 _events.emit(AddHabitEvent.Error(e.localizedMessage ?: "Failed to add habit"))
             } finally {

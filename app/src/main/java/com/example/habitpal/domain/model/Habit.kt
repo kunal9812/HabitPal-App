@@ -14,6 +14,9 @@ data class Habit(
     val icon: String = "ic_habit_default",
     val createdAt: Long = System.currentTimeMillis(),
     val isActive: Boolean = true,
-    val isCompletedToday: Boolean = false
+    val isCompletedToday: Boolean = false,
+    // v2 fields
+    val categoryId: Int? = null,
+    val sortOrder: Int = 0,
+    val isArchived: Boolean = false
 )
-

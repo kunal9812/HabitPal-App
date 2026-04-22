@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.habitpal.R
 import com.example.habitpal.databinding.FragmentHomeBinding
@@ -33,6 +34,7 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var habitAdapter: HabitAdapter
     private lateinit var dateStripAdapter: DateStripAdapter
+    private lateinit var categoryFilterAdapter: CategoryFilterAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private val locationPermissionRequest = registerForActivityResult(
@@ -58,6 +60,7 @@ class HomeFragment : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         setupRecyclerView()
         setupDateStrip()
+        setupCategoryFilter()
         setupClickListeners()
         observeState()
         checkLocationPermissionAndLoadWeather()
@@ -98,12 +101,35 @@ class HomeFragment : Fragment() {
                 findNavController().navigate(action)
             },
             onCompleteClick = { habit ->
-                viewModel.completeHabit(habit.id)
+                CompletionNoteBottomSheet { note ->
+                    viewModel.completeHabit(habit.id, note)
+                }.show(childFragmentManager, "completion_note")
             }
         )
         binding.rvHabits.apply {
             adapter = habitAdapter
             layoutManager = LinearLayoutManager(requireContext())
+        }
+        ItemTouchHelper(HabitItemTouchHelper(object : HabitDragListener {
+            override fun onItemMoved(fromPosition: Int, toPosition: Int) {
+                viewModel.reorderHabits(fromPosition, toPosition)
+            }
+
+            override fun onDropCompleted() = Unit
+        })).attachToRecyclerView(binding.rvHabits)
+    }
+
+    private fun setupCategoryFilter() {
+        categoryFilterAdapter = CategoryFilterAdapter { category ->
+            viewModel.selectCategory(category)
+        }
+        binding.rvCategoryFilter.apply {
+            adapter = categoryFilterAdapter
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
         }
     }
 
@@ -125,7 +151,13 @@ class HomeFragment : Fragment() {
         }
         viewLifecycleOwner.collectFlow(viewModel.habits) { habits ->
             habitAdapter.submitList(habits)
-            binding.tvTodayHabits.text = "Today's Habits (${habits.size})"
+            binding.tvTodayHabits.text = getString(R.string.today_habits_count, habits.size)
+        }
+        viewLifecycleOwner.collectFlow(viewModel.categories) { categories ->
+            categoryFilterAdapter.submitCategories(categories, viewModel.selectedCategory.value?.id)
+        }
+        viewLifecycleOwner.collectFlow(viewModel.selectedCategory) { selected ->
+            categoryFilterAdapter.submitCategories(viewModel.categories.value, selected?.id)
         }
         viewLifecycleOwner.collectFlow(viewModel.weather) { weatherResource ->
             binding.tvWeather.text = when (weatherResource) {

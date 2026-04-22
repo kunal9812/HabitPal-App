@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -38,36 +39,48 @@
             android:layout_marginTop="8dp"
             android:textSize="16sp"/>
 
-        <TextView
-            android:id="@+id/tv_streak"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="🔥 0 day streak"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Tips"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/tv_tips"
+        <!-- Stats row -->
+        <LinearLayout
+            android:id="@+id/stats_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp"
-            android:text="• Stay consistent\n• Start small\n• Track your progress"/>
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <include layout="@layout/view_stat_card"
+                android:id="@+id/stat_current_streak"/>
+            <include layout="@layout/view_stat_card"
+                android:id="@+id/stat_best_streak"/>
+            <include layout="@layout/view_stat_card"
+                android:id="@+id/stat_total"/>
+            <include layout="@layout/view_stat_card"
+                android:id="@+id/stat_rate"/>
+        </LinearLayout>
+
+        <!-- 6-month heatmap calendar -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            android:text="Completion History"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <com.kizitonwose.calendar.view.CalendarView
+            android:id="@+id/calendar_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cv_dayViewResource="@layout/item_calendar_day"
+            app:cv_monthHeaderResource="@layout/item_calendar_month_header"
+            app:cv_orientation="horizontal"
+            app:cv_scrollPaged="true"/>
 
         <Button
             android:id="@+id/btn_complete"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             android:text="Mark as Complete"/>
 
         <Button
@@ -79,13 +92,13 @@
             android:text="Edit Habit"/>
 
         <Button
-            android:id="@+id/btn_delete"
+            android:id="@+id/btn_archive"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
-            android:text="Delete Habit"/>
+            android:text="Archive Habit"/>
 
     </LinearLayout>
 </ScrollView>

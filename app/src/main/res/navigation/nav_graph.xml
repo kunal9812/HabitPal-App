@@ -21,10 +21,25 @@ app:startDestination="@id/getStartedFragment">
     android:label="Login"
     tools:layout="@layout/fragment_login">
     <action
+        android:id="@+id/action_loginFragment_to_onboardingTemplates"
+        app:destination="@id/onboardingTemplateFragment" />
+    <action
         android:id="@+id/action_loginFragment_to_homeFragment"
         app:destination="@id/homeFragment"
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
+</fragment>
+
+<fragment
+    android:id="@+id/onboardingTemplateFragment"
+    android:name="com.example.habitpal.presentation.onboarding.OnboardingTemplateFragment"
+    android:label="Choose Habits"
+    tools:layout="@layout/fragment_onboarding_templates">
+    <action
+        android:id="@+id/action_onboarding_templates_to_home"
+        app:destination="@id/homeFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true"/>
 </fragment>
 
 <fragment
@@ -38,6 +53,9 @@ app:startDestination="@id/getStartedFragment">
     <action
         android:id="@+id/action_homeFragment_to_habitDetailFragment"
         app:destination="@id/habitDetailFragment" />
+    <action
+        android:id="@+id/action_homeFragment_to_archivedHabits"
+        app:destination="@id/archivedHabitsFragment" />
 </fragment>
 
 <fragment
@@ -75,6 +93,12 @@ app:startDestination="@id/getStartedFragment">
         android:defaultValue="-1L" />
 
 </fragment>
+
+<fragment
+    android:id="@+id/archivedHabitsFragment"
+    android:name="com.example.habitpal.presentation.archived.ArchivedHabitsFragment"
+    android:label="Archived Habits"
+    tools:layout="@layout/fragment_archived" />
 
 <fragment
     android:id="@+id/progressFragment"

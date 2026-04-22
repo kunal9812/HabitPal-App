@@ -30,6 +30,20 @@ class HabitRepositoryImpl @Inject constructor(
             entities.map { it.toDomain(completedTodayIds) }
         }
 
+    override fun getActiveHabits(): Flow<List<Habit>> =
+        combine(habitDao.getActiveHabits(), habitLogDao.getAllLogs()) { entities, logs ->
+            val todayStart = startOfDay()
+            val todayEnd = todayStart + TimeUnit.DAYS.toMillis(1)
+            val completedTodayIds = logs
+                .filter { it.completedAt in todayStart until todayEnd }
+                .map { it.habitId }
+                .toSet()
+            entities.map { it.toDomain(completedTodayIds) }
+        }
+
+    override fun getArchivedHabits(): Flow<List<Habit>> =
+        habitDao.getArchivedHabits().map { entities -> entities.map { it.toDomain() } }
+
     override suspend fun getHabitById(id: Int): Habit? =
         habitDao.getHabitById(id)?.toDomain()
 
@@ -45,11 +59,23 @@ class HabitRepositoryImpl @Inject constructor(
     override suspend fun softDeleteHabit(id: Int) =
         habitDao.softDeleteHabit(id)
 
+    override suspend fun archiveHabit(habitId: Int) =
+        habitDao.archiveHabit(habitId)
+
+    override suspend fun restoreHabit(habitId: Int) =
+        habitDao.restoreHabit(habitId)
+
+    override suspend fun updateSortOrders(updates: List<Pair<Int, Int>>) =
+        habitDao.updateSortOrders(updates)
+
     override fun getLogsForHabit(habitId: Int): Flow<List<HabitLog>> =
         habitLogDao.getLogsForHabit(habitId).map { entities -> entities.map { it.toDomain() } }
 
     override fun getAllLogs(): Flow<List<HabitLog>> =
         habitLogDao.getAllLogs().map { entities -> entities.map { it.toDomain() } }
+
+    override fun getLogsInRangeFlow(habitId: Int, startMs: Long, endMs: Long): Flow<List<HabitLog>> =
+        habitLogDao.getLogsInRangeFlow(habitId, startMs, endMs).map { entities -> entities.map { it.toDomain() } }
 
     override suspend fun logHabitCompletion(log: HabitLog): Long =
         habitLogDao.insertLog(log.toEntity())
@@ -64,4 +90,5 @@ class HabitRepositoryImpl @Inject constructor(
     ): List<HabitLog> =
         habitLogDao.getLogsForHabitInRange(habitId, startTime, endTime).map { it.toDomain() }
 }
+
 

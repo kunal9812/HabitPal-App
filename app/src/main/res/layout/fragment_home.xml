@@ -52,6 +52,15 @@
             android:orientation="horizontal"
             android:clipToPadding="false"/>
 
+        <!-- Category filter chips -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_category_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"/>
+
         <!-- Today's habits label -->
         <TextView
             android:id="@+id/tv_today_habits"

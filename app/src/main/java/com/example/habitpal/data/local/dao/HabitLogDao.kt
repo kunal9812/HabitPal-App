@@ -28,5 +28,22 @@ interface HabitLogDao {
         startTime: Long,
         endTime: Long
     ): List<HabitLogEntity>
+
+    @Query(
+        "SELECT * FROM habit_logs WHERE habitId = :habitId " +
+        "AND completedAt BETWEEN :startTime AND :endTime"
+    )
+    fun getLogsInRangeFlow(
+        habitId: Int,
+        startTime: Long,
+        endTime: Long
+    ): Flow<List<HabitLogEntity>>
+
+    @Query(
+        "SELECT COUNT(*) FROM habit_logs WHERE habitId = :habitId " +
+        "AND completedAt BETWEEN :dayStart AND :dayEnd"
+    )
+    suspend fun countForDay(habitId: Int, dayStart: Long, dayEnd: Long): Int
 }
+
 

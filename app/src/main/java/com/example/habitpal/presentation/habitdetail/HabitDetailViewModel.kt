@@ -3,9 +3,11 @@ package com.example.habitpal.presentation.habitdetail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habitpal.domain.model.Habit
-import com.example.habitpal.domain.model.HabitLog
+import com.example.habitpal.domain.usecase.ArchiveHabitUseCase
+import com.example.habitpal.domain.usecase.GetCompletionHistoryUseCase
+import com.example.habitpal.domain.usecase.GetHabitStatsUseCase
+import com.example.habitpal.domain.usecase.HabitStats
 import com.example.habitpal.domain.usecase.habit.CompleteHabitUseCase
-import com.example.habitpal.domain.usecase.habit.DeleteHabitUseCase
 import com.example.habitpal.domain.usecase.habit.GetHabitsUseCase
 import com.example.habitpal.domain.usecase.progress.GetHabitStreakUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,14 +15,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class HabitDetailViewModel @Inject constructor(
     private val getHabitsUseCase: GetHabitsUseCase,
     private val completeHabitUseCase: CompleteHabitUseCase,
-    private val deleteHabitUseCase: DeleteHabitUseCase,
-    private val getHabitStreakUseCase: GetHabitStreakUseCase
+    private val archiveHabitUseCase: ArchiveHabitUseCase,
+    private val getHabitStreakUseCase: GetHabitStreakUseCase,
+    private val getCompletionHistoryUseCase: GetCompletionHistoryUseCase,
+    private val getHabitStatsUseCase: GetHabitStatsUseCase
 ) : ViewModel() {
 
     private val _habit = MutableStateFlow<Habit?>(null)
@@ -29,8 +34,14 @@ class HabitDetailViewModel @Inject constructor(
     private val _streak = MutableStateFlow(0)
     val streak: StateFlow<Int> = _streak.asStateFlow()
 
-    private val _isDeleted = MutableStateFlow(false)
-    val isDeleted: StateFlow<Boolean> = _isDeleted.asStateFlow()
+    private val _isArchived = MutableStateFlow(false)
+    val isArchived: StateFlow<Boolean> = _isArchived.asStateFlow()
+
+    private val _completionMap = MutableStateFlow<Map<LocalDate, Boolean>>(emptyMap())
+    val completionMap: StateFlow<Map<LocalDate, Boolean>> = _completionMap.asStateFlow()
+
+    private val _stats = MutableStateFlow<HabitStats?>(null)
+    val stats: StateFlow<HabitStats?> = _stats.asStateFlow()
 
     fun loadHabit(habitId: Int) {
         viewModelScope.launch {
@@ -39,22 +50,36 @@ class HabitDetailViewModel @Inject constructor(
                 _streak.value = getHabitStreakUseCase(habitId)
             }
         }
+        loadStats(habitId)
     }
 
-    fun completeHabit(habitId: Int) {
+    private fun loadStats(habitId: Int) {
         viewModelScope.launch {
-            completeHabitUseCase(habitId)
+            getCompletionHistoryUseCase.execute(habitId).collect { map ->
+                _completionMap.value = map
+                _stats.value = getHabitStatsUseCase.calculate(
+                    map.keys.toList(),
+                    LocalDate.now().minusMonths(6) // fallback if no createdDate
+                )
+            }
+        }
+    }
+
+    fun completeHabit(habitId: Int, note: String? = null) {
+        viewModelScope.launch {
+            completeHabitUseCase(habitId, note)
             _streak.value = getHabitStreakUseCase(habitId)
         }
     }
 
-    fun deleteHabit() {
+    fun archiveHabit() {
         viewModelScope.launch {
             _habit.value?.let {
-                deleteHabitUseCase(it)
-                _isDeleted.value = true
+                archiveHabitUseCase.archive(it.id)
+                _isArchived.value = true
             }
         }
     }
 }
+
 

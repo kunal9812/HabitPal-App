@@ -10,13 +10,16 @@ fun HabitEntity.toDomain(completedTodayIds: Set<Int> = emptySet()): Habit = Habi
     id = id,
     title = title,
     description = description,
-    frequency = HabitFrequency.valueOf(frequency),
+    frequency = try { HabitFrequency.valueOf(frequency) } catch (e: Exception) { HabitFrequency.DAILY },
     reminderTime = reminderTime,
     color = color,
     icon = icon,
     createdAt = createdAt,
     isActive = isActive,
-    isCompletedToday = id in completedTodayIds
+    isCompletedToday = id in completedTodayIds,
+    categoryId = categoryId,
+    sortOrder = sortOrder,
+    isArchived = isArchived
 )
 
 fun Habit.toEntity(): HabitEntity = HabitEntity(
@@ -28,7 +31,11 @@ fun Habit.toEntity(): HabitEntity = HabitEntity(
     color = color,
     icon = icon,
     createdAt = createdAt,
-    isActive = isActive
+    isActive = isActive,
+    frequencyJson = frequency.name,
+    categoryId = categoryId,
+    sortOrder = sortOrder,
+    isArchived = isArchived
 )
 
 fun HabitLogEntity.toDomain(): HabitLog = HabitLog(
@@ -44,4 +51,3 @@ fun HabitLog.toEntity(): HabitLogEntity = HabitLogEntity(
     completedAt = completedAt,
     notes = notes
 )
-

@@ -14,6 +14,18 @@ data class HabitEntity(
     val color: Int = 0,
     val icon: String = "ic_habit_default",
     val createdAt: Long = System.currentTimeMillis(),
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
+
+    // Scheduling (v2)
+    val frequencyJson: String = "DAILY",
+    val reminderHour: Int? = null,
+    val reminderMinute: Int? = null,
+    val timeOfDay: String? = null,
+
+    // Organisation (v2)
+    val categoryId: Int? = null,
+    val sortOrder: Int = 0,
+    val isArchived: Boolean = false
 )
+
 

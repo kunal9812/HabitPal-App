@@ -1,8 +1,10 @@
 package com.example.habitpal.di
 
+import com.example.habitpal.data.repository.CategoryRepositoryImpl
 import com.example.habitpal.data.repository.HabitRepositoryImpl
 import com.example.habitpal.data.repository.QuoteRepositoryImpl
 import com.example.habitpal.data.repository.WeatherRepositoryImpl
+import com.example.habitpal.domain.repository.CategoryRepository
 import com.example.habitpal.domain.repository.HabitRepository
 import com.example.habitpal.domain.repository.QuoteRepository
 import com.example.habitpal.domain.repository.WeatherRepository
@@ -27,5 +29,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindQuoteRepository(impl: QuoteRepositoryImpl): QuoteRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCategoryRepository(impl: CategoryRepositoryImpl): CategoryRepository
 }
+
 

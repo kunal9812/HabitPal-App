@@ -13,4 +13,46 @@
     <string name="weather_summary">%1$s • %2$.1f°C • %3$s</string>
     <string name="today_habits_count">Today\'s Habits (%1$d)</string>
     <string name="mark_complete">Mark habit as complete</string>
+
+    <!-- Frequency -->
+    <string name="frequency">Frequency</string>
+    <string name="daily">Daily</string>
+    <string name="specific_days">Specific Days</string>
+    <string name="times_per_week">Times/Week</string>
+
+    <!-- Reminder -->
+    <string name="reminder_time">Reminder Time</string>
+    <string name="enable_reminder">Enable Reminder</string>
+    <string name="set_time">Set Time</string>
+    <string name="select_reminder_time">Select reminder time</string>
+    <string name="notification_permission_denied">Notification permission denied</string>
+
+    <!-- Archive -->
+    <string name="archive_habit">Archive Habit</string>
+    <string name="archive_habit_message">This will hide the habit from your home screen. You can restore it later.</string>
+    <string name="archive">Archive</string>
+    <string name="cancel">Cancel</string>
+    <string name="restore">Restore</string>
+    <string name="archived_habits">Archived Habits</string>
+
+    <!-- Onboarding template picker -->
+    <string name="pick_habits_title">Choose habits to start with</string>
+    <string name="pick_habits_subtitle">Select any to add to your daily routine</string>
+    <string name="get_started">Get Started</string>
+
+    <!-- Stats -->
+    <string name="current_streak">Current</string>
+    <string name="best_streak">Best</string>
+    <string name="total_completions">Total</string>
+    <string name="completion_rate">Rate</string>
+
+    <!-- Widget -->
+    <string name="widget_description">HabitPal — Today\'s habits at a glance</string>
+    <string name="widget_today_habits">Today\'s Habits</string>
+    <string name="widget_no_habits">No active habits yet</string>
+
+    <!-- Note sheet -->
+    <string name="add_note_hint">Add a note (optional)…</string>
+    <string name="save_note">Save</string>
+    <string name="skip">Skip</string>
 </resources>

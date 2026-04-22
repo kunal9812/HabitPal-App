@@ -1,9 +1,14 @@
 package com.example.habitpal.presentation.edithabit
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -11,9 +16,13 @@ import androidx.navigation.fragment.navArgs
 import com.example.habitpal.R
 import com.example.habitpal.databinding.FragmentEditHabitBinding
 import com.example.habitpal.domain.model.HabitFrequency
+import com.example.habitpal.util.ReminderScheduler
 import com.example.habitpal.util.collectFlow
 import com.example.habitpal.util.toast
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class EditHabitFragment : Fragment() {
@@ -25,9 +34,17 @@ class EditHabitFragment : Fragment() {
     private val args: EditHabitFragmentArgs by navArgs()
     private val habitId: Int by lazy { args.habitId.toInt() }
 
+    @Inject
+    lateinit var reminderScheduler: ReminderScheduler
+
     private var selectedColor: Int = 0xFF4A90D9.toInt()
     private var selectedFrequency: HabitFrequency = HabitFrequency.DAILY
+    private var selectedReminderTime: String? = null
     private var isPreFilled = false
+
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* handled gracefully */ }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +59,7 @@ class EditHabitFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupFrequencyChips()
         setupColorPicker()
+        setupReminderToggle()
         setupClickListeners()
         observeState()
         viewModel.loadHabit(habitId)
@@ -79,19 +97,60 @@ class EditHabitFragment : Fragment() {
         }
     }
 
+    private fun setupReminderToggle() {
+        binding.switchReminder.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                requestNotificationPermissionIfNeeded()
+                showTimePicker()
+            } else {
+                selectedReminderTime = null
+                binding.tvReminderTime.text = "No reminder set"
+                binding.tvReminderHint.visibility = View.GONE
+            }
+        }
+
+        binding.tvReminderTime.setOnClickListener {
+            if (binding.switchReminder.isChecked) showTimePicker()
+        }
+    }
+
+    private fun showTimePicker() {
+        val (initHour, initMinute) = parseCurrentTime()
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_12H)
+            .setHour(initHour)
+            .setMinute(initMinute)
+            .setTitleText("Set reminder time")
+            .build()
+
+        picker.addOnPositiveButtonClickListener {
+            val h = picker.hour
+            val m = picker.minute
+            selectedReminderTime = "%02d:%02d".format(h, m)
+            binding.tvReminderTime.text = formatDisplayTime(h, m)
+            binding.tvReminderHint.visibility = View.VISIBLE
+        }
+        picker.addOnNegativeButtonClickListener {
+            if (selectedReminderTime == null) {
+                binding.switchReminder.isChecked = false
+            }
+        }
+        picker.show(parentFragmentManager, "time_picker_edit")
+    }
+
     private fun setupClickListeners() {
         binding.btnSaveHabit.setOnClickListener {
             viewModel.saveHabit(
                 title = binding.etHabitTitle.text.toString(),
                 description = binding.etHabitDescription.text.toString(),
                 frequency = selectedFrequency,
-                color = selectedColor
+                color = selectedColor,
+                reminderTime = selectedReminderTime
             )
         }
     }
 
     private fun observeState() {
-        // Pre-fill the form once when the habit first loads
         viewLifecycleOwner.collectFlow(viewModel.habit) { habit ->
             if (habit != null && !isPreFilled) {
                 isPreFilled = true
@@ -108,7 +167,7 @@ class EditHabitFragment : Fragment() {
                 binding.chipGroupFrequency.check(chipId)
                 selectedFrequency = habit.frequency
 
-                // Pre-select color: find the closest color in the map and scale it up
+                // Pre-select color
                 if (habit.color != 0) {
                     selectedColor = habit.color
                     val colorViews = mapOf(
@@ -125,18 +184,81 @@ class EditHabitFragment : Fragment() {
                         binding.tvSelectedColor.text = "$name selected"
                     }
                 }
+
+                // Pre-fill reminder
+                if (habit.reminderTime != null) {
+                    selectedReminderTime = habit.reminderTime
+                    // Suppress the listener from opening the picker while we set the toggle
+                    binding.switchReminder.setOnCheckedChangeListener(null)
+                    binding.switchReminder.isChecked = true
+                    binding.tvReminderTime.text = formatDisplayTime(habit.reminderTime)
+                    binding.tvReminderHint.visibility = View.VISIBLE
+                    // Re-attach listener after pre-fill
+                    setupReminderToggle()
+                }
             }
         }
 
         viewLifecycleOwner.collectFlow(viewModel.events) { event ->
             when (event) {
                 is EditHabitEvent.HabitSaved -> {
-                    toast("Habit updated! ✅")
+                    val habit = event.habit
+                    if (habit.reminderTime != null) {
+                        reminderScheduler.schedule(habit)
+                        toast("Habit updated! Reminder set for ${formatDisplayTime(habit.reminderTime)} ✅")
+                    } else {
+                        // Reminder was cleared — cancel any existing alarm
+                        reminderScheduler.cancel(habit.id, habit.title)
+                        toast("Habit updated! ✅")
+                    }
                     findNavController().navigateUp()
                 }
                 is EditHabitEvent.Error -> toast(event.message)
             }
         }
+    }
+
+    // ---------- helpers ----------
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    private fun parseCurrentTime(): Pair<Int, Int> {
+        val raw = selectedReminderTime ?: return Pair(8, 0)
+        return try {
+            val parts = raw.split(":")
+            Pair(parts[0].toInt(), parts[1].toInt())
+        } catch (e: Exception) {
+            Pair(8, 0)
+        }
+    }
+
+    private fun formatDisplayTime(raw: String?): String {
+        if (raw == null) return "No reminder set"
+        return try {
+            val parts = raw.split(":")
+            formatDisplayTime(parts[0].toInt(), parts[1].toInt())
+        } catch (e: Exception) {
+            raw
+        }
+    }
+
+    private fun formatDisplayTime(hour: Int, minute: Int): String {
+        val amPm = if (hour < 12) "AM" else "PM"
+        val displayHour = when {
+            hour == 0 -> 12
+            hour > 12 -> hour - 12
+            else -> hour
+        }
+        return "%d:%02d %s".format(displayHour, minute, amPm)
     }
 
     override fun onDestroyView() {
