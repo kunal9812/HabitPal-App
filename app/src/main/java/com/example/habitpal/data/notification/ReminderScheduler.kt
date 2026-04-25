@@ -14,7 +14,11 @@ import javax.inject.Singleton
 class ReminderScheduler @Inject constructor(@ApplicationContext private val context: Context) {
 
     fun schedule(habit: Habit) {
-        val hour = habit.reminderHour ?: return
+        val hour = habit.reminderHour
+        if (hour == null) {
+            cancel(habit.id)
+            return
+        }
         val minute = habit.reminderMinute ?: 0
         val now = LocalDateTime.now()
         var target = now.toLocalDate().atTime(hour, minute)

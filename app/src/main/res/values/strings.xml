@@ -26,6 +26,8 @@
     <string name="set_time">Set Time</string>
     <string name="select_reminder_time">Select reminder time</string>
     <string name="notification_permission_denied">Notification permission denied</string>
+    <string name="notification_habit_title">⏰ %1$s</string>
+    <string name="notification_habit_text">Don\'t break your streak!</string>
 
     <!-- Archive -->
     <string name="archive_habit">Archive Habit</string>

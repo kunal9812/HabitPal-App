@@ -10,11 +10,17 @@ import androidx.core.app.NotificationCompat
 import com.example.habitpal.MainActivity
 import com.example.habitpal.R
 
-object NotificationHelper {
+import javax.inject.Inject
+import javax.inject.Singleton
 
-    const val CHANNEL_ID = "habit_reminders"
-    private const val CHANNEL_NAME = "Habit Reminders"
-    private const val CHANNEL_DESC = "Daily reminders to keep your habits on track"
+@Singleton
+class NotificationHelper @Inject constructor() {
+
+    companion object {
+        const val CHANNEL_ID = "habit_reminders"
+        private const val CHANNEL_NAME = "Habit Reminders"
+        private const val CHANNEL_DESC = "Daily reminders to keep your habits on track"
+    }
 
     fun createChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

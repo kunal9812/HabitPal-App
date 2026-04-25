@@ -39,9 +39,9 @@ class NotificationHelper @Inject constructor(@ApplicationContext private val con
         context.getSystemService(NotificationManager::class.java).notify(
             habit.id,
             NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("⏰ ${habit.title}")
-                .setContentText("Don't break your streak!")
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(context.getString(R.string.notification_habit_title, habit.title))
+                .setContentText(context.getString(R.string.notification_habit_text))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pi).setAutoCancel(true).build()
         )

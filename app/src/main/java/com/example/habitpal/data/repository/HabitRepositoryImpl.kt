@@ -50,8 +50,9 @@ class HabitRepositoryImpl @Inject constructor(
         habitDao.getHabitById(habitId)?.toDomain()
 
     override suspend fun isCompletedToday(habitId: Int): Boolean {
-        val today = java.time.LocalDate.now().toString()
-        return completionDao.getCompletionForDate(habitId, today) != null
+        val todayStart = startOfDay()
+        val todayEnd = todayStart + TimeUnit.DAYS.toMillis(1)
+        return habitLogDao.countForDay(habitId, todayStart, todayEnd) > 0
     }
 
     override suspend fun addHabit(habit: Habit): Long =

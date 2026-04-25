@@ -27,14 +27,34 @@ abstract class HabitDatabase : RoomDatabase() {
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                try { db.execSQL("ALTER TABLE habits ADD COLUMN frequencyJson TEXT NOT NULL DEFAULT 'DAILY'") } catch (_: Exception) {}
-                try { db.execSQL("ALTER TABLE habits ADD COLUMN reminderHour INTEGER") } catch (_: Exception) {}
-                try { db.execSQL("ALTER TABLE habits ADD COLUMN reminderMinute INTEGER") } catch (_: Exception) {}
-                try { db.execSQL("ALTER TABLE habits ADD COLUMN timeOfDay TEXT") } catch (_: Exception) {}
-                try { db.execSQL("ALTER TABLE habits ADD COLUMN categoryId INTEGER") } catch (_: Exception) {}
-                try { db.execSQL("ALTER TABLE habits ADD COLUMN sortOrder INTEGER NOT NULL DEFAULT 0") } catch (_: Exception) {}
-                try { db.execSQL("ALTER TABLE habits ADD COLUMN isArchived INTEGER NOT NULL DEFAULT 0") } catch (_: Exception) {}
-                try { db.execSQL("ALTER TABLE habit_completions ADD COLUMN note TEXT") } catch (_: Exception) {}
+                val cursor = db.query("PRAGMA table_info(habits)")
+                val columns = mutableSetOf<String>()
+                while (cursor.moveToNext()) {
+                    columns.add(cursor.getString(1))
+                }
+                cursor.close()
+
+                if (!columns.contains("frequencyJson")) {
+                    db.execSQL("ALTER TABLE habits ADD COLUMN frequencyJson TEXT NOT NULL DEFAULT 'DAILY'")
+                }
+                if (!columns.contains("reminderHour")) {
+                    db.execSQL("ALTER TABLE habits ADD COLUMN reminderHour INTEGER")
+                }
+                if (!columns.contains("reminderMinute")) {
+                    db.execSQL("ALTER TABLE habits ADD COLUMN reminderMinute INTEGER")
+                }
+                if (!columns.contains("timeOfDay")) {
+                    db.execSQL("ALTER TABLE habits ADD COLUMN timeOfDay TEXT")
+                }
+                if (!columns.contains("categoryId")) {
+                    db.execSQL("ALTER TABLE habits ADD COLUMN categoryId INTEGER")
+                }
+                if (!columns.contains("sortOrder")) {
+                    db.execSQL("ALTER TABLE habits ADD COLUMN sortOrder INTEGER NOT NULL DEFAULT 0")
+                }
+                if (!columns.contains("isArchived")) {
+                    db.execSQL("ALTER TABLE habits ADD COLUMN isArchived INTEGER NOT NULL DEFAULT 0")
+                }
             }
         }
 

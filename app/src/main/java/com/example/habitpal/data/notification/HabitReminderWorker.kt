@@ -36,7 +36,7 @@ class HabitReminderWorker @AssistedInject constructor(
         ).isNotEmpty()
 
         if (!alreadyDone) {
-            NotificationHelper.showReminderNotification(applicationContext, habit.id, habit.title)
+            notificationHelper.showReminderNotification(applicationContext, habit.id, habit.title)
         }
 
         return Result.success()

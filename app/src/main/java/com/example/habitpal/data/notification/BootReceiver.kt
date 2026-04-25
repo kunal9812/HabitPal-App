@@ -18,8 +18,13 @@ class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+        val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
-            reminderScheduler.rescheduleAll(habitRepository.getActiveHabits().first())
+            try {
+                reminderScheduler.rescheduleAll(habitRepository.getActiveHabits().first())
+            } finally {
+                pendingResult.finish()
+            }
         }
     }
 }

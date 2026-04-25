@@ -20,9 +20,6 @@ data class HabitEntity(
     val isActive: Boolean = true,
 
     // Scheduling (v2)
-    val frequencyJson: String = "DAILY",
-    val reminderHour: Int? = null,
-    val reminderMinute: Int? = null,
     val timeOfDay: String? = null,
 
     // Organisation (v2)
