@@ -8,6 +8,7 @@ import com.example.habitpal.domain.model.HabitFrequency
 import com.example.habitpal.domain.model.HabitTemplate
 import com.example.habitpal.domain.repository.HabitRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,6 +19,7 @@ class OnboardingViewModel @Inject constructor(
 ) : ViewModel() {
 
     val templates: List<HabitTemplate> = HabitTemplate.defaults
+    val userName: Flow<String> = userPreferences.userName
     private val selectedTemplates = mutableSetOf<HabitTemplate>()
 
     fun toggleTemplate(template: HabitTemplate) {

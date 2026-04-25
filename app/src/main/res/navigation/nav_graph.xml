@@ -23,7 +23,7 @@ app:startDestination="@id/loginFragment">
     <action
         android:id="@+id/action_onboarding_to_home"
         app:destination="@id/homeFragment"
-        app:popUpTo="@id/onboardingFragment"
+        app:popUpTo="@id/loginFragment"
         app:popUpToInclusive="true" />
 </fragment>
 

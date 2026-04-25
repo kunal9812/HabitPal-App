@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.habitpal.R
 import com.example.habitpal.databinding.FragmentOnboardingBinding
+import com.example.habitpal.util.collectFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,6 +38,12 @@ class OnboardingFragment : Fragment() {
         binding.rvTemplates.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.rvTemplates.adapter = adapter
         adapter.submitList(viewModel.templates)
+
+        viewLifecycleOwner.collectFlow(viewModel.userName) { name ->
+            val cleanName = name.trim().ifEmpty { getString(R.string.default_user_name) }
+            binding.tvOnboardingSubtitle.text =
+                getString(R.string.pick_habits_subtitle_personalized, cleanName)
+        }
 
         binding.btnSkip.setOnClickListener {
             viewModel.skipOnboarding { navigateHome() }

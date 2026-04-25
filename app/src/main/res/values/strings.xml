@@ -40,7 +40,9 @@
     <!-- Onboarding template picker -->
     <string name="pick_habits_title">Choose habits to start with</string>
     <string name="pick_habits_subtitle">Select any to add to your daily routine</string>
+    <string name="pick_habits_subtitle_personalized">Nice to meet you, %1$s. Select any to add to your daily routine</string>
     <string name="onboarding_name_hint">Your name</string>
+    <string name="default_user_name">User</string>
     <string name="get_started">Get Started</string>
 
     <!-- Stats -->
