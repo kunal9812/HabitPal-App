@@ -13,7 +13,8 @@ import dagger.assisted.AssistedInject
 class HabitReminderWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val habitRepository: HabitRepository
+    private val habitRepository: HabitRepository,
+    private val notificationHelper: NotificationHelper
 ) : CoroutineWorker(context, params) {
 
 
@@ -49,4 +50,5 @@ class HabitReminderWorker @AssistedInject constructor(
         cal.set(java.util.Calendar.MILLISECOND, 0)
         return cal.timeInMillis
     }
+
 }

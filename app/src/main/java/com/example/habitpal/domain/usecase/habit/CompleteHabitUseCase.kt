@@ -7,11 +7,11 @@ import javax.inject.Inject
 class CompleteHabitUseCase @Inject constructor(
     private val habitRepository: HabitRepository
 ) {
-    suspend operator fun invoke(habitId: Int, notes: String? = null): Long {
+    suspend operator fun invoke(habitId: Int, note: String? = null): Long {
         val log = HabitLog(
             habitId = habitId,
             completedAt = System.currentTimeMillis(),
-            notes = notes
+            notes = note
         )
         return habitRepository.logHabitCompletion(log)
     }

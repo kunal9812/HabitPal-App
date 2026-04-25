@@ -1,6 +1,7 @@
 package com.example.habitpal.data.repository
 
 import com.example.habitpal.data.local.dao.HabitDao
+import com.example.habitpal.data.local.dao.HabitCompletionDao
 import com.example.habitpal.data.local.dao.HabitLogDao
 import com.example.habitpal.data.mapper.toDomain
 import com.example.habitpal.data.mapper.toEntity
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 class HabitRepositoryImpl @Inject constructor(
     private val habitDao: HabitDao,
-    private val habitLogDao: HabitLogDao
+    private val habitLogDao: HabitLogDao,
+    private val completionDao: HabitCompletionDao
 ) : HabitRepository {
 
     override fun getAllHabits(): Flow<List<Habit>> =
@@ -44,8 +46,13 @@ class HabitRepositoryImpl @Inject constructor(
     override fun getArchivedHabits(): Flow<List<Habit>> =
         habitDao.getArchivedHabits().map { entities -> entities.map { it.toDomain() } }
 
-    override suspend fun getHabitById(id: Int): Habit? =
-        habitDao.getHabitById(id)?.toDomain()
+    override suspend fun getHabitById(habitId: Int): Habit? =
+        habitDao.getHabitById(habitId)?.toDomain()
+
+    override suspend fun isCompletedToday(habitId: Int): Boolean {
+        val today = java.time.LocalDate.now().toString()
+        return completionDao.getCompletionForDate(habitId, today) != null
+    }
 
     override suspend fun addHabit(habit: Habit): Long =
         habitDao.insertHabit(habit.toEntity())

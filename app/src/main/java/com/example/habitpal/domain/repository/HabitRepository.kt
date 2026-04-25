@@ -8,7 +8,8 @@ interface HabitRepository {
     fun getAllHabits(): Flow<List<Habit>>
     fun getActiveHabits(): Flow<List<Habit>>
     fun getArchivedHabits(): Flow<List<Habit>>
-    suspend fun getHabitById(id: Int): Habit?
+    suspend fun getHabitById(habitId: Int): Habit?
+    suspend fun isCompletedToday(habitId: Int): Boolean
     suspend fun addHabit(habit: Habit): Long
     suspend fun updateHabit(habit: Habit)
     suspend fun deleteHabit(habit: Habit)

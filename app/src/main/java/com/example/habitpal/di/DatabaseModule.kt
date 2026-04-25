@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.habitpal.data.local.UserPreferencesDataSource
 import com.example.habitpal.data.local.dao.CategoryDao
+import com.example.habitpal.data.local.dao.HabitCompletionDao
 import com.example.habitpal.data.local.dao.HabitDao
 import com.example.habitpal.data.local.dao.HabitLogDao
 import com.example.habitpal.data.local.database.HabitDatabase
@@ -27,7 +28,7 @@ object DatabaseModule {
             HabitDatabase::class.java,
             Constants.DATABASE_NAME
         )
-            .addMigrations(HabitDatabase.MIGRATION_1_2)
+            .addMigrations(HabitDatabase.MIGRATION_1_2, HabitDatabase.MIGRATION_2_3)
             .build()
 
     @Provides
@@ -37,6 +38,10 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideHabitLogDao(database: HabitDatabase): HabitLogDao = database.habitLogDao()
+
+    @Provides
+    @Singleton
+    fun provideHabitCompletionDao(database: HabitDatabase): HabitCompletionDao = database.habitCompletionDao()
 
     @Provides
     @Singleton
