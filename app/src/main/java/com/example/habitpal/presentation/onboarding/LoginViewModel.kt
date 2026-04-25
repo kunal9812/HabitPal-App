@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class LoginEvent {
-    object OnboardingComplete : LoginEvent()
+    object UserDetailsSaved : LoginEvent()
     data class Error(val message: String) : LoginEvent()
 }
 
@@ -32,8 +32,7 @@ class LoginViewModel @Inject constructor(
         }
         viewModelScope.launch {
             userPreferences.saveUserName(name.trim())
-            userPreferences.saveHasOnboarded(true)
-            _events.emit(LoginEvent.OnboardingComplete)
+            _events.emit(LoginEvent.UserDetailsSaved)
         }
     }
 }

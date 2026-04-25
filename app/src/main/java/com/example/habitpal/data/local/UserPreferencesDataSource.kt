@@ -24,6 +24,7 @@ class UserPreferencesDataSource @Inject constructor(
         val KEY_NOTIFICATIONS = booleanPreferencesKey("notifications_enabled")
         val KEY_DARK_MODE = booleanPreferencesKey("dark_mode_enabled")
         val KEY_HAS_ONBOARDED = booleanPreferencesKey("has_onboarded")
+        val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
     }
 
     val userName: Flow<String> = context.dataStore.data
@@ -37,6 +38,11 @@ class UserPreferencesDataSource @Inject constructor(
 
     val hasOnboarded: Flow<Boolean> = context.dataStore.data
         .map { it[KEY_HAS_ONBOARDED] ?: false }
+
+    val isOnboardingComplete: Flow<Boolean> = context.dataStore.data
+        .map { prefs ->
+            prefs[ONBOARDING_COMPLETE] ?: prefs[KEY_HAS_ONBOARDED] ?: false
+        }
 
     suspend fun saveUserName(name: String) {
         context.dataStore.edit { it[KEY_USER_NAME] = name }
@@ -52,5 +58,12 @@ class UserPreferencesDataSource @Inject constructor(
 
     suspend fun saveHasOnboarded(completed: Boolean) {
         context.dataStore.edit { it[KEY_HAS_ONBOARDED] = completed }
+    }
+
+    suspend fun setOnboardingComplete() {
+        context.dataStore.edit {
+            it[ONBOARDING_COMPLETE] = true
+            it[KEY_HAS_ONBOARDED] = true
+        }
     }
 }

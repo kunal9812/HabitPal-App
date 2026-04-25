@@ -36,7 +36,7 @@ class OnboardingTemplateFragment : Fragment() {
 
         binding.btnGetStarted.setOnClickListener {
             viewModel.finishOnboarding {
-                findNavController().navigate(R.id.action_onboarding_templates_to_home)
+                findNavController().navigate(R.id.homeFragment)
             }
         }
     }

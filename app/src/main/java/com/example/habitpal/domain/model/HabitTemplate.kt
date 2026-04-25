@@ -1,11 +1,14 @@
 package com.example.habitpal.domain.model
 
 data class HabitTemplate(
-    val name: String,
+    val title: String,
     val emoji: String,
-    val categoryName: String,
-    val defaultFrequency: HabitFrequency = HabitFrequency.DAILY
+    val categoryName: String
 ) {
+    // Backward-compatible alias for older onboarding code paths.
+    val name: String
+        get() = title
+
     companion object {
         val defaults = listOf(
             HabitTemplate("Drink water",       "💧", "Health"),

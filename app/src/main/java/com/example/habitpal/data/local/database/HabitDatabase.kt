@@ -5,16 +5,18 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.habitpal.data.local.dao.CategoryDao
 import com.example.habitpal.data.local.dao.HabitCompletionDao
 import com.example.habitpal.data.local.dao.HabitDao
 import com.example.habitpal.data.local.dao.HabitLogDao
 import com.example.habitpal.data.local.converter.FrequencyConverter
+import com.example.habitpal.data.local.entity.CategoryEntity
 import com.example.habitpal.data.local.entity.CompletionEntity
 import com.example.habitpal.data.local.entity.HabitEntity
 import com.example.habitpal.data.local.entity.HabitLogEntity
 
 @Database(
-    entities = [HabitEntity::class, HabitLogEntity::class, CompletionEntity::class],
+    entities = [HabitEntity::class, HabitLogEntity::class, CompletionEntity::class, CategoryEntity::class],
     version = 3,
     exportSchema = false
 )
@@ -23,6 +25,7 @@ abstract class HabitDatabase : RoomDatabase() {
     abstract fun habitDao(): HabitDao
     abstract fun habitLogDao(): HabitLogDao
     abstract fun habitCompletionDao(): HabitCompletionDao
+    abstract fun categoryDao(): CategoryDao
 
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -60,6 +63,16 @@ abstract class HabitDatabase : RoomDatabase() {
 
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS categories (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        name TEXT NOT NULL,
+                        colorHex TEXT NOT NULL,
+                        iconName TEXT NOT NULL
+                    )
+                    """.trimIndent()
+                )
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS habit_completions (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,

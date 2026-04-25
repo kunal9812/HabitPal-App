@@ -3,12 +3,12 @@ package com.example.habitpal.presentation.habitdetail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habitpal.domain.model.Habit
+import com.example.habitpal.domain.repository.HabitRepository
 import com.example.habitpal.domain.usecase.ArchiveHabitUseCase
-import com.example.habitpal.domain.usecase.GetCompletionHistoryUseCase
-import com.example.habitpal.domain.usecase.GetHabitStatsUseCase
-import com.example.habitpal.domain.usecase.HabitStats
 import com.example.habitpal.domain.usecase.habit.CompleteHabitUseCase
 import com.example.habitpal.domain.usecase.habit.GetHabitsUseCase
+import com.example.habitpal.domain.usecase.habit.GetHabitStatsUseCase
+import com.example.habitpal.domain.usecase.habit.HabitStats
 import com.example.habitpal.domain.usecase.progress.GetHabitStreakUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,11 +20,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HabitDetailViewModel @Inject constructor(
+    private val habitRepository: HabitRepository,
     private val getHabitsUseCase: GetHabitsUseCase,
     private val completeHabitUseCase: CompleteHabitUseCase,
     private val archiveHabitUseCase: ArchiveHabitUseCase,
     private val getHabitStreakUseCase: GetHabitStreakUseCase,
-    private val getCompletionHistoryUseCase: GetCompletionHistoryUseCase,
     private val getHabitStatsUseCase: GetHabitStatsUseCase
 ) : ViewModel() {
 
@@ -50,16 +50,19 @@ class HabitDetailViewModel @Inject constructor(
                 _streak.value = getHabitStreakUseCase(habitId)
             }
         }
-        loadStats(habitId)
+        loadHistory(habitId)
     }
 
-    private fun loadStats(habitId: Int) {
+    fun loadHistory(habitId: Int) {
         viewModelScope.launch {
-            getCompletionHistoryUseCase.execute(habitId).collect { map ->
-                _completionMap.value = map
+            val end = LocalDate.now()
+            val start = end.minusMonths(6)
+            habitRepository.getCompletionsInRange(habitId, start.toString(), end.toString())
+                .collect { dates ->
+                _completionMap.value = dates.associateWith { true }
                 _stats.value = getHabitStatsUseCase.calculate(
-                    map.keys.toList(),
-                    LocalDate.now().minusMonths(6) // fallback if no createdDate
+                    dates,
+                    _habit.value?.createdAt ?: System.currentTimeMillis()
                 )
             }
         }

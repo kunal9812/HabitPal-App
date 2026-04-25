@@ -19,7 +19,7 @@ class HabitTemplateAdapter(
 
         fun bind(template: HabitTemplate, isSelected: Boolean) {
             binding.tvEmoji.text = template.emoji
-            binding.tvName.text = template.name
+            binding.tvName.text = template.title
             binding.tvCategory.text = template.categoryName
             binding.cbSelected.isChecked = isSelected
             binding.root.setOnClickListener {
@@ -39,7 +39,7 @@ class HabitTemplateAdapter(
         holder.bind(getItem(position), position in selected)
 
     class DiffCallback : DiffUtil.ItemCallback<HabitTemplate>() {
-        override fun areItemsTheSame(a: HabitTemplate, b: HabitTemplate) = a.name == b.name
+        override fun areItemsTheSame(a: HabitTemplate, b: HabitTemplate) = a.title == b.title
         override fun areContentsTheSame(a: HabitTemplate, b: HabitTemplate) = a == b
     }
 }

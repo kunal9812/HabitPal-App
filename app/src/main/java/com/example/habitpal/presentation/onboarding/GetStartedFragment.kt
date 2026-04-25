@@ -28,7 +28,7 @@ class GetStartedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnGetStarted.setOnClickListener {
-            findNavController().navigate(R.id.action_getStartedFragment_to_loginFragment)
+            findNavController().navigate(R.id.onboardingFragment)
         }
     }
 

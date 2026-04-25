@@ -3,43 +3,28 @@
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:id="@+id/nav_graph"
-app:startDestination="@id/getStartedFragment">
-
-<fragment
-    android:id="@+id/getStartedFragment"
-    android:name="com.example.habitpal.presentation.onboarding.GetStartedFragment"
-    android:label="Get Started"
-    tools:layout="@layout/fragment_get_started">
-    <action
-        android:id="@+id/action_getStartedFragment_to_loginFragment"
-        app:destination="@id/loginFragment" />
-</fragment>
+app:startDestination="@id/loginFragment">
 
 <fragment
     android:id="@+id/loginFragment"
     android:name="com.example.habitpal.presentation.onboarding.LoginFragment"
-    android:label="Login"
+    android:label="User Details"
     tools:layout="@layout/fragment_login">
     <action
-        android:id="@+id/action_loginFragment_to_onboardingTemplates"
-        app:destination="@id/onboardingTemplateFragment" />
-    <action
-        android:id="@+id/action_loginFragment_to_homeFragment"
-        app:destination="@id/homeFragment"
-        app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="true" />
+        android:id="@+id/action_loginFragment_to_onboardingFragment"
+        app:destination="@id/onboardingFragment" />
 </fragment>
 
 <fragment
-    android:id="@+id/onboardingTemplateFragment"
-    android:name="com.example.habitpal.presentation.onboarding.OnboardingTemplateFragment"
-    android:label="Choose Habits"
-    tools:layout="@layout/fragment_onboarding_templates">
+    android:id="@+id/onboardingFragment"
+    android:name="com.example.habitpal.presentation.onboarding.OnboardingFragment"
+    android:label="Onboarding"
+    tools:layout="@layout/fragment_onboarding">
     <action
-        android:id="@+id/action_onboarding_templates_to_home"
+        android:id="@+id/action_onboarding_to_home"
         app:destination="@id/homeFragment"
-        app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="true"/>
+        app:popUpTo="@id/onboardingFragment"
+        app:popUpToInclusive="true" />
 </fragment>
 
 <fragment

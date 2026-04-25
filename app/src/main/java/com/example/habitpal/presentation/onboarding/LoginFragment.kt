@@ -51,11 +51,8 @@ class LoginFragment : Fragment() {
     private fun observeEvents() {
         viewLifecycleOwner.collectFlow(viewModel.events) { event ->
             when (event) {
-                is LoginEvent.OnboardingComplete -> {
-                    // Navigate to Home and clear the entire onboarding back stack
-                    findNavController().navigate(
-                        R.id.action_loginFragment_to_homeFragment,
-                    )
+                is LoginEvent.UserDetailsSaved -> {
+                    findNavController().navigate(R.id.action_loginFragment_to_onboardingFragment)
                 }
                 is LoginEvent.Error -> toast(event.message)
             }

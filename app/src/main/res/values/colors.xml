@@ -37,6 +37,7 @@
     <color name="divider">#E5E7EB</color>
 
     <!-- Heatmap calendar colors -->
+    <color name="habit_done_color">#4CAF50</color>
     <color name="color_habit_done">#4CAF50</color>
     <color name="color_day_empty">#E0E0E0</color>
 </resources>

@@ -7,41 +7,48 @@ import com.example.habitpal.domain.model.Habit
 import com.example.habitpal.domain.model.HabitFrequency
 import com.example.habitpal.domain.model.HabitTemplate
 import com.example.habitpal.domain.repository.HabitRepository
-import com.example.habitpal.domain.usecase.SeedCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OnboardingTemplateViewModel @Inject constructor(
+class OnboardingViewModel @Inject constructor(
     private val habitRepository: HabitRepository,
-    private val seedCategoriesUseCase: SeedCategoriesUseCase,
     private val userPreferences: UserPreferencesDataSource
 ) : ViewModel() {
 
-    val templates = HabitTemplate.defaults
+    val templates: List<HabitTemplate> = HabitTemplate.defaults
     private val selectedTemplates = mutableSetOf<HabitTemplate>()
 
     fun toggleTemplate(template: HabitTemplate) {
-        if (template in selectedTemplates) selectedTemplates.remove(template)
-        else selectedTemplates.add(template)
+        if (!selectedTemplates.add(template)) {
+            selectedTemplates.remove(template)
+        }
     }
-
-    fun isSelected(template: HabitTemplate) = template in selectedTemplates
 
     fun finishOnboarding(onComplete: () -> Unit) {
         viewModelScope.launch {
-            seedCategoriesUseCase.seedIfEmpty()
             selectedTemplates.forEach { template ->
-                val habit = Habit(
-                    title = template.name,
-                    description = "",
-                    frequency = HabitFrequency.DAILY
+                habitRepository.addHabit(
+                    Habit(
+                        title = template.title,
+                        description = "",
+                        frequency = HabitFrequency.DAILY
+                    )
                 )
-                habitRepository.addHabit(habit)
             }
-            userPreferences.saveHasOnboarded(true)
+            userPreferences.setOnboardingComplete()
+            onComplete()
+        }
+    }
+
+    fun skipOnboarding(onComplete: () -> Unit) {
+        viewModelScope.launch {
+            userPreferences.setOnboardingComplete()
             onComplete()
         }
     }
 }
+
+
+

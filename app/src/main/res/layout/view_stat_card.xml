@@ -8,19 +8,18 @@
     android:padding="8dp">
 
     <TextView
-        android:id="@+id/tv_stat_value"
+        android:id="@+id/tvStatValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="?attr/colorPrimary"
         android:text="0"/>
 
     <TextView
-        android:id="@+id/tv_stat_label"
+        android:id="@+id/tvStatLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="11sp"
-        android:textColor="?attr/colorOnSurface"
         android:text="label"/>
 </LinearLayout>

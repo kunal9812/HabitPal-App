@@ -12,6 +12,7 @@ import com.example.habitpal.util.startOfDay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -97,6 +98,10 @@ class HabitRepositoryImpl @Inject constructor(
         endTime: Long
     ): List<HabitLog> =
         habitLogDao.getLogsForHabitInRange(habitId, startTime, endTime).map { it.toDomain() }
+
+    override fun getCompletionsInRange(habitId: Int, start: String, end: String): Flow<List<LocalDate>> =
+        completionDao.getCompletionsInRange(habitId, start, end)
+            .map { list -> list.map { LocalDate.parse(it.completionDate) } }
 }
 
 

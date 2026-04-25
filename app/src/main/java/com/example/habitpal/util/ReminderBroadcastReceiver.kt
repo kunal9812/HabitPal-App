@@ -11,7 +11,7 @@ class ReminderBroadcastReceiver : BroadcastReceiver() {
         val habitTitle = intent.getStringExtra(EXTRA_HABIT_TITLE) ?: return
         if (habitId == -1) return
 
-        NotificationHelper.showReminderNotification(context, habitId, habitTitle)
+        NotificationHelper().showReminderNotification(context, habitId, habitTitle)
     }
 
     companion object {

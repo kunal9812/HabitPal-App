@@ -3,6 +3,7 @@ package com.example.habitpal.domain.repository
 import com.example.habitpal.domain.model.Habit
 import com.example.habitpal.domain.model.HabitLog
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 interface HabitRepository {
     fun getAllHabits(): Flow<List<Habit>>
@@ -23,6 +24,7 @@ interface HabitRepository {
     suspend fun logHabitCompletion(log: HabitLog): Long
     suspend fun deleteLog(log: HabitLog)
     suspend fun getLogsForHabitInRange(habitId: Int, startTime: Long, endTime: Long): List<HabitLog>
+    fun getCompletionsInRange(habitId: Int, start: String, end: String): Flow<List<LocalDate>>
 }
 
 
