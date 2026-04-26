@@ -53,6 +53,7 @@ class HabitDetailFragment : Fragment() {
     private fun setupClickListeners() {
         binding.btnComplete.setOnClickListener {
             viewModel.completeHabit(habitId)
+            findNavController().navigateUp()
         }
         binding.btnEdit.setOnClickListener {
             val action = HabitDetailFragmentDirections
