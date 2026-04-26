@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.habitpal.R
 import com.example.habitpal.databinding.FragmentAddHabitBinding
+import com.example.habitpal.domain.model.HabitCategory
 import com.example.habitpal.domain.model.HabitFrequency
 import com.example.habitpal.util.ReminderScheduler
 import com.example.habitpal.util.collectFlow
@@ -21,7 +22,6 @@ import com.example.habitpal.util.toast
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,12 +37,12 @@ class AddHabitFragment : Fragment() {
 
     private var selectedColor: Int = 0xFF4A90D9.toInt()
     private var selectedFrequency: HabitFrequency = HabitFrequency.DAILY
-    private var selectedReminderTime: String? = null   // "HH:mm" or null
+    private var selectedCategory: HabitCategory = HabitCategory.DEFAULT
+    private var selectedReminderTime: String? = null
 
-    // Runtime notification permission launcher (Android 13+)
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { /* permission result — alarm is already saved regardless */ }
+    ) { /* permission result */ }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +56,7 @@ class AddHabitFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupFrequencyChips()
+        setupCategoryChips()
         setupColorPicker()
         setupReminderToggle()
         setupClickListeners()
@@ -69,6 +70,23 @@ class AddHabitFragment : Fragment() {
                 checkedIds.contains(R.id.chip_weekly) -> HabitFrequency.WEEKLY
                 checkedIds.contains(R.id.chip_monthly) -> HabitFrequency.MONTHLY
                 else -> HabitFrequency.DAILY
+            }
+        }
+    }
+
+    private fun setupCategoryChips() {
+        binding.chipGroupCategory.setOnCheckedStateChangeListener { _, checkedIds ->
+            selectedCategory = when {
+                checkedIds.contains(R.id.chip_category_health) -> HabitCategory.HEALTH
+                checkedIds.contains(R.id.chip_category_mind) -> HabitCategory.MIND
+                checkedIds.contains(R.id.chip_category_social) -> HabitCategory.SOCIAL
+                checkedIds.contains(R.id.chip_category_learn) -> HabitCategory.LEARN
+                checkedIds.contains(R.id.chip_category_wellness) -> HabitCategory.WELLNESS
+                checkedIds.contains(R.id.chip_category_growth) -> HabitCategory.GROWTH
+                checkedIds.contains(R.id.chip_category_finance) -> HabitCategory.FINANCE
+                checkedIds.contains(R.id.chip_category_mindfulness) -> HabitCategory.MINDFULNESS
+                checkedIds.contains(R.id.chip_category_personal) -> HabitCategory.PERSONAL
+                else -> HabitCategory.DEFAULT
             }
         }
     }
@@ -105,8 +123,6 @@ class AddHabitFragment : Fragment() {
                 binding.tvReminderHint.visibility = View.GONE
             }
         }
-
-        // Tapping the time label also re-opens the picker when enabled
         binding.tvReminderTime.setOnClickListener {
             if (binding.switchReminder.isChecked) showTimePicker()
         }
@@ -129,7 +145,6 @@ class AddHabitFragment : Fragment() {
             binding.tvReminderHint.visibility = View.VISIBLE
         }
         picker.addOnNegativeButtonClickListener {
-            // User cancelled — uncheck the switch if no time was previously set
             if (selectedReminderTime == null) {
                 binding.switchReminder.isChecked = false
             }
@@ -143,6 +158,7 @@ class AddHabitFragment : Fragment() {
                 title = binding.etHabitTitle.text.toString(),
                 description = binding.etHabitDescription.text.toString(),
                 frequency = selectedFrequency,
+                category = selectedCategory,
                 reminderTime = selectedReminderTime,
                 color = selectedColor
             )
@@ -153,7 +169,6 @@ class AddHabitFragment : Fragment() {
         viewLifecycleOwner.collectFlow(viewModel.events) { event ->
             when (event) {
                 is AddHabitEvent.HabitAdded -> {
-                    // Schedule the alarm after the habit is saved
                     if (event.habit.reminderTime != null) {
                         reminderScheduler.schedule(event.habit)
                         toast("Habit added! Reminder set for ${formatDisplayTime(event.habit.reminderTime)}")
@@ -166,8 +181,6 @@ class AddHabitFragment : Fragment() {
             }
         }
     }
-
-    // ---------- helpers ----------
 
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -190,7 +203,6 @@ class AddHabitFragment : Fragment() {
         }
     }
 
-    /** Converts a "HH:mm" string to locale-aware 12h display. */
     private fun formatDisplayTime(raw: String?): String {
         if (raw == null) return "No reminder set"
         return try {

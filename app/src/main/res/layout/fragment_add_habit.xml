@@ -92,7 +92,96 @@
                 android:text="Monthly"/>
 
         </com.google.android.material.chip.ChipGroup>
+        <!-- Category Label -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
 
+        <!-- Category Chips -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:checkedChip="@id/chip_category_default"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category_default"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Default"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category_health"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Health"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category_mind"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mind"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category_social"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Social"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category_learn"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Learn"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category_wellness"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wellness"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category_growth"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Growth"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category_finance"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Finance"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category_mindfulness"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mindfulness"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category_personal"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Personal"/>
+
+        </com.google.android.material.chip.ChipGroup>
         <!-- Color Label -->
         <TextView
             android:layout_width="wrap_content"

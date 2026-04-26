@@ -3,15 +3,13 @@ package com.example.habitpal.presentation.addhabit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habitpal.domain.model.Habit
+import com.example.habitpal.domain.model.HabitCategory
 import com.example.habitpal.domain.model.HabitFrequency
 import com.example.habitpal.domain.usecase.habit.AddHabitUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,9 +23,6 @@ class AddHabitViewModel @Inject constructor(
     private val addHabitUseCase: AddHabitUseCase
 ) : ViewModel() {
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
     private val _events = MutableSharedFlow<AddHabitEvent>()
     val events: SharedFlow<AddHabitEvent> = _events.asSharedFlow()
 
@@ -35,6 +30,8 @@ class AddHabitViewModel @Inject constructor(
         title: String,
         description: String,
         frequency: HabitFrequency = HabitFrequency.DAILY,
+        category: HabitCategory = HabitCategory.DEFAULT,
+        categoryId: Int? = null,
         reminderTime: String? = null,
         color: Int = 0,
         icon: String = "ic_habit_default"
@@ -46,24 +43,22 @@ class AddHabitViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            _isLoading.value = true
             try {
                 val habit = Habit(
-                        title = title.trim(),
-                        description = description.trim(),
-                        frequency = frequency,
-                        reminderTime = reminderTime,
-                        color = color,
-                        icon = icon
-                    )
+                    title = title.trim(),
+                    description = description.trim(),
+                    frequency = frequency,
+                    category = category,
+                    categoryId = categoryId,
+                    reminderTime = reminderTime,
+                    color = color,
+                    icon = icon
+                )
                 addHabitUseCase(habit)
                 _events.emit(AddHabitEvent.HabitAdded(habit))
             } catch (e: Exception) {
                 _events.emit(AddHabitEvent.Error(e.localizedMessage ?: "Failed to add habit"))
-            } finally {
-                _isLoading.value = false
             }
         }
     }
 }
-
